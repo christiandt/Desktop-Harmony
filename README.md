@@ -1,4 +1,4 @@
 # Desktop-Harmony
 A desktop client for the harmony remote
 
-Currently GUI only.
+Please make sure you input the correct IP addess!
