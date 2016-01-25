@@ -2,11 +2,13 @@ from PyQt4 import QtCore, QtGui
 from error import Error
 from activitySelect import ActivitySelect
 from controller import Controller
+from storage import Storage
 
 class UserPref(QtGui.QDialog):
 
     def __init__(self):
         super(UserPref, self).__init__()
+        self.storage = Storage()
         title = "Desktop Harmony - Preferences"
         self.setWindowTitle(str(title))
         self.resize(300, 50)
@@ -14,7 +16,7 @@ class UserPref(QtGui.QDialog):
         self.layout = QtGui.QGridLayout(self)
 
         #username input
-        self.userNameInput = QtGui.QLineEdit('', self)
+        self.userNameInput = QtGui.QLineEdit(self.storage.read_username(), self)
         self.userNameInput.setStyleSheet("font: 15pt")
         self.userNameInput.setFixedHeight(30)
         self.layout.addWidget(self.userNameInput, 0, 1, 1, 2)
@@ -22,7 +24,7 @@ class UserPref(QtGui.QDialog):
         self.layout.addWidget(userLabel, 0, 0)
 
         #password input
-        self.passwordInput = QtGui.QLineEdit('', self)
+        self.passwordInput = QtGui.QLineEdit(self.storage.read_password(), self)
         self.passwordInput.setEchoMode(QtGui.QLineEdit.Password)
         self.passwordInput.setStyleSheet("font: 15pt")
         self.passwordInput.setFixedHeight(30)
@@ -31,15 +33,15 @@ class UserPref(QtGui.QDialog):
         self.layout.addWidget(userLabel, 1, 0)
 
         #ip input
-        self.ipInput = QtGui.QLineEdit('', self)
+        self.ipInput = QtGui.QLineEdit(self.storage.read_ip(), self)
         self.ipInput.setStyleSheet("font: 15pt")
         self.ipInput.setFixedHeight(30)
         self.layout.addWidget(self.ipInput, 2, 1, 1, 2)
         userLabel = QtGui.QLabel('IP:')
         self.layout.addWidget(userLabel, 2, 0)
 
-        #port input
-        self.portInput = QtGui.QLineEdit('5222', self)
+        #port input (5222)
+        self.portInput = QtGui.QLineEdit(self.storage.read_username(), self)
         self.portInput.setStyleSheet("font: 15pt")
         self.portInput.setFixedHeight(30)
         self.layout.addWidget(self.portInput, 3, 1, 1, 2)
@@ -77,6 +79,12 @@ class UserPref(QtGui.QDialog):
         password = str(self.passwordInput.text())
         ip = str(self.ipInput.text())
         port = str(self.portInput.text())
+        remember = self.rememberBox.isChecked()
+
+        if remember:
+            self.storage.write_settings(username, password, ip, port)
+        else:
+            self.storage.remove_settings()
 
         try:
             self.controller = Controller(username, password, ip, port)
